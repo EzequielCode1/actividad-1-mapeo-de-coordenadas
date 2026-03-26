@@ -1,0 +1,64 @@
+% Limpieza total del entorno
+clear; close all; clc;
+
+datos = [
+    -5,  9,  -2;   % a
+    -3,  8,  63;   % b
+     5, -2,  90;   % c
+     0,  0, 180;   % d
+    -6,  3, -55;   % e
+    10, -2,  45;   % f
+     9,  1,  88;   % g
+     5,  2,  33;   % h
+    -1, -1,  21;   % i
+     6,  4, -40;   % j
+     5,  7,  72;   % k
+     7,  7,  30;   % l
+    11, -4, 360;   % m
+    20,  5, 270;   % n
+    10,  9, 345;   % ñ
+    -9, -8,   8;   % o
+     1,  1,  60;   % p
+     3,  1, -30;   % q
+    15,  2, 199;   % r
+   -10,  0, 300    % s
+];
+
+% Arreglo simple de caracteres para las viñetas
+letras = 'abcdefghijklmnñopqrs';
+
+% Impresión del encabezado
+fprintf('\n%-4s | %-16s | %-16s | %-10s | %-18s\n', 'Caso', 'Coord Inercial', 'Local (xi_L)', 'Magnitud', 'Vector Recuperado');
+fprintf('----------------------------------------------------------------------------------\n');
+
+% Bucle para recorrer cada fila de la matriz de datos
+for i = 1:size(datos, 1)
+    
+    % 1. Extraer los valores inerciales
+    x_I = datos(i, 1);
+    y_I = datos(i, 2);
+    th_deg = datos(i, 3);
+    
+    % 2. Convertir el ángulo a radianes para las funciones trigonométricas
+    th_rad = th_deg * (pi / 180); 
+    
+    % Vector de posición inercial 
+    Pos_Inercial = [x_I; y_I];
+    
+    % 3. Crear matriz de rotación 2x2 
+    R = [cos(th_rad), -sin(th_rad);
+         sin(th_rad),  cos(th_rad)];
+       
+    % 4. Transformación Inercial -> Local 
+    xi_local = R' * Pos_Inercial;
+    
+    % 5. Cálculo de la magnitud usando la norma del vector
+    magnitud = norm(xi_local);
+    
+    % 6. Mapeo Inverso
+    xi_recuperado = R * xi_local;
+    
+    % 7. Mostrar los resultados en consola
+    fprintf('  %c  | (%3d, %3d, %4d°) | [%6.2f, %6.2f] | %8.2f | [%6.2f, %6.2f]\n', ...
+            letras(i), x_I, y_I, th_deg, xi_local(1), xi_local(2), magnitud, xi_recuperado(1), xi_recuperado(2));
+end
